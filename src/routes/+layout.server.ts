@@ -32,7 +32,12 @@ export async function load({ locals, cookies }) {
 		})
 		.from(schema.blogPosts)
 		.innerJoin(schema.members, eq(schema.blogPosts.authorId, schema.members.id))
-		.where(sql`${schema.blogPosts.publishedAt} != '' AND ${schema.blogPosts.archived} = false`)
+		.where(
+			and(
+				sql`${schema.blogPosts.publishedAt} != ''`,
+				eq(schema.blogPosts.archived, false)
+			)
+		)
 		.orderBy(desc(schema.blogPosts.publishedAt))
 		.limit(3)
 		.catch((e) => {
