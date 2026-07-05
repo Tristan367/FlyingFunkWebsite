@@ -8,7 +8,7 @@ frontend:
       commands:
         - npm run build
   artifacts:
-    baseDirectory: .vercel/output
+    baseDirectory: build
     files:
       - '**/*'
   cache:
