@@ -1,14 +1,20 @@
-import { drizzle } from 'drizzle-orm/libsql';
-import { createClient } from '@libsql/client';
 import * as schema from './schema';
 
-// For PostgreSQL in production, replace the above 2 lines with:
-// import { drizzle } from 'drizzle-orm/postgres-js';
-// import postgres from 'postgres';
-
 const dbUrl = process.env.DATABASE_URL || 'file:local.db';
+const isPostgres = dbUrl.startsWith('postgresql://') || dbUrl.startsWith('postgres://');
 
-// For PostgreSQL: const client = postgres(dbUrl);
-const client = createClient({ url: dbUrl });
+let db: any;
 
-export const db = drizzle(client, { schema });
+if (isPostgres) {
+	const { drizzle: pgDrizzle } = await import('drizzle-orm/postgres-js');
+	const postgres = (await import('postgres')).default;
+	const client = postgres(dbUrl); // postgres.js auto-enables SSL for RDS endpoints
+	db = pgDrizzle(client, { schema });
+} else {
+	const { drizzle: libDrizzle } = await import('drizzle-orm/libsql');
+	const { createClient } = await import('@libsql/client');
+	const client = createClient({ url: dbUrl });
+	db = libDrizzle(client, { schema });
+}
+
+export { db };
