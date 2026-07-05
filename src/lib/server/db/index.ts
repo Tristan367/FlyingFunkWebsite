@@ -1,7 +1,10 @@
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import * as schema from './schema';
 
-const dbUrl = process.env.DATABASE_URL || 'file:local.db';
+const dbUrl = process.env.DATABASE_URL;
+if (!dbUrl) {
+	throw new Error('DATABASE_URL environment variable is not set. Set it in Amplify console → App settings → Environment variables.');
+}
 const isPostgres = dbUrl.startsWith('postgresql://') || dbUrl.startsWith('postgres://');
 
 let _db: PostgresJsDatabase<typeof schema>;
