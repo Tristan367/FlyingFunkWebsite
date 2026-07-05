@@ -3,8 +3,8 @@ import * as schema from './schema';
 import { eq } from 'drizzle-orm';
 
 const members = [
-	{ id: 'm1', name: 'Tristan', email: 'tristan@flyingfunk.com', phone: '509-555-0001', instrument: 'Guitar', instruments: 'guitar, bass', unavailableOnHolidays: false, address: 'Spokane, WA', slug: 'tristan' },
-	{ id: 'm2', name: 'Madi', email: 'madi@flyingfunk.com', phone: '509-555-0002', instrument: 'Vocals', instruments: 'vocals', unavailableOnHolidays: false, address: 'Spokane, WA', slug: 'madi' },
+	{ id: 'm1', name: 'Tristan', email: 't_johnson367@outlook.com', phone: '509-555-0001', instrument: 'Guitar', instruments: 'guitar, bass', unavailableOnHolidays: false, address: 'Spokane, WA', slug: 'tristan' },
+	{ id: 'm2', name: 'Madi', email: 'mjcmusic87@gmail.com', phone: '509-555-0002', instrument: 'Vocals', instruments: 'vocals', unavailableOnHolidays: false, address: 'Spokane, WA', slug: 'madi' },
 	{ id: 'm3', name: 'Matt', email: 'matt@flyingfunk.com', phone: '509-555-0003', instrument: 'Drums', instruments: 'drums', unavailableOnHolidays: false, address: 'Spokane Valley, WA', slug: 'matt' },
 	{ id: 'm4', name: 'Johnny', email: 'johnny@flyingfunk.com', phone: '509-555-0004', instrument: 'Keys', instruments: 'keys', unavailableOnHolidays: false, address: 'Spokane, WA', slug: 'johnny' },
 	{ id: 'm5', name: 'Stefan', email: 'stefan@flyingfunk.com', phone: '208-555-0005', instrument: 'Bass', instruments: 'bass, keys', unavailableOnHolidays: false, address: 'Coeur d\'Alene, ID', slug: 'stefan' },
