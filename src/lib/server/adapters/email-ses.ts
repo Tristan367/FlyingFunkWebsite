@@ -22,13 +22,14 @@ const transporter = nodemailer.createTransport({
 
 export class SESEmailAdapter implements EmailAdapter {
 	async sendVerificationCode(email: string, code: string) {
-		await transporter.sendMail({
+		const info = await transporter.sendMail({
 			from: FROM,
 			to: email,
 			subject: `Your ${SITE_NAME} verification code: ${code}`,
 			text: `Your verification code is: ${code}\n\nThis code expires in 10 minutes.`,
 			html: `<p>Your verification code is:</p><h2>${code}</h2><p>This code expires in 10 minutes.</p>`
 		});
+		console.log('[SES] Verification email sent to', email, 'messageId:', info.messageId);
 	}
 
 	async sendNotification(email: string, subject: string, body: string) {
