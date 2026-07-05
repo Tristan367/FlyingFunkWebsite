@@ -45,6 +45,7 @@
 	"dependencies": {
 		"@node-rs/argon2": "^2.0.2",
 		"@sveltejs/adapter-node": "^5.5.7",
+		"@sveltejs/adapter-vercel": "^6.3.4",
 		"@tiptap/core": "^3.27.1",
 		"@tiptap/extension-color": "^3.27.1",
 		"@tiptap/extension-highlight": "^3.27.1",
