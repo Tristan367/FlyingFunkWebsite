@@ -8,7 +8,7 @@ frontend:
       commands:
         - npm run build
         - cd build/compute/default && npm i --omit=dev
-        - node -e "const f=require('fs');const path='build/compute/default/server';f.readdirSync(path,{recursive:true}).filter(x=>x.endsWith('.js')).forEach(x=>{const p=path+'/'+x;let c=f.readFileSync(p,'utf8');if(c.includes('REPLACE_WITH_DB_URL')){c=c.replace(/REPLACE_WITH_DB_URL/g,process.env.DATABASE_URL||'');f.writeFileSync(p,c);console.log('Injected DB URL into '+x)}})"
+        - cd build/compute/default && node -e "const f=require('fs');const p='server';f.readdirSync(p,{recursive:true}).filter(x=>x.endsWith('.js')).forEach(x=>{const fp=p+'/'+x;let c=f.readFileSync(fp,'utf8');if(c.includes('REPLACE_WITH_DB_URL')){c=c.replace(/REPLACE_WITH_DB_URL/g,process.env.DATABASE_URL||'');f.writeFileSync(fp,c);console.log('Injected into '+x)}})"
   artifacts:
     baseDirectory: build
     files:
