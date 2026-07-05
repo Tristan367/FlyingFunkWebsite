@@ -1,23 +1,16 @@
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import * as schema from './schema';
 
-let dbUrl = process.env.DATABASE_URL;
-
-// Fallback: Amplify SSR sometimes doesn't pass console env vars to the compute function.
-// The amplify.yml writes them to build/compute/default/env.json at build time.
-if (!dbUrl) {
-	try {
-		const fs = await import('node:fs');
-		if (fs.existsSync('./env.json')) {
-			const envData = JSON.parse(fs.readFileSync('./env.json', 'utf-8'));
-			dbUrl = envData.DATABASE_URL;
-			Object.assign(process.env, envData);
-		}
-	} catch {}
-}
+// In production (Amplify SSR), the DATABASE_URL is injected at build time via sed in amplify.yml.
+// The build step replaces the placeholder below with the actual connection string.
+// For local dev, it falls back to process.env.DATABASE_URL or file:local.db.
+const INJECTED_URL = 'REPLACE_WITH_DB_URL';
+const dbUrl = INJECTED_URL.startsWith('postgresql://')
+	? INJECTED_URL
+	: process.env.DATABASE_URL || 'file:local.db';
 
 if (!dbUrl) {
-	throw new Error('DATABASE_URL not available. Check Amplify Environment Variables.');
+	throw new Error('DATABASE_URL not available.');
 }
 const isPostgres = dbUrl.startsWith('postgresql://') || dbUrl.startsWith('postgres://');
 
