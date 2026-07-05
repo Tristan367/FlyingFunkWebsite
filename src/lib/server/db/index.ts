@@ -3,7 +3,10 @@ import * as schema from './schema';
 
 const dbUrl = process.env.DATABASE_URL;
 if (!dbUrl) {
-	throw new Error('DATABASE_URL environment variable is not set. Set it in Amplify console → App settings → Environment variables.');
+	// List all available env keys for debugging
+	const keys = Object.keys(process.env).filter(k => k.includes('DATA') || k.includes('DB') || k.includes('URL'));
+	console.error('DATABASE_URL not found. Available DB-related env keys:', keys);
+	throw new Error('DATABASE_URL environment variable is not set. Check Amplify console → App settings → Environment variables.');
 }
 const isPostgres = dbUrl.startsWith('postgresql://') || dbUrl.startsWith('postgres://');
 
