@@ -17,7 +17,11 @@ export async function load({ locals, cookies }) {
 			)
 		)
 		.orderBy(schema.gigs.date)
-		.limit(10);
+		.limit(10)
+		.catch((e) => {
+			console.error('Gigs query error:', e);
+			throw e;
+		});
 
 	const blogPosts = await db
 		.select({
@@ -28,9 +32,13 @@ export async function load({ locals, cookies }) {
 		})
 		.from(schema.blogPosts)
 		.innerJoin(schema.members, eq(schema.blogPosts.authorId, schema.members.id))
-		.where(sql`${schema.blogPosts.publishedAt} != '' AND ${schema.blogPosts.archived} = 0`)
+		.where(sql`${schema.blogPosts.publishedAt} != '' AND ${schema.blogPosts.archived} = false`)
 		.orderBy(desc(schema.blogPosts.publishedAt))
-		.limit(3);
+		.limit(3)
+		.catch((e) => {
+			console.error('Blog query error:', e);
+			throw e;
+		});
 
 	const theme = cookies.get('theme') || 'funk';
 

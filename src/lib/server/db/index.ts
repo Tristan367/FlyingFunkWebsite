@@ -19,7 +19,7 @@ let _db: PostgresJsDatabase<typeof schema>;
 if (isPostgres) {
 	const { drizzle: pgDrizzle } = await import('drizzle-orm/postgres-js');
 	const postgres = (await import('postgres')).default;
-	const client = postgres(dbUrl, { ssl: 'require' });
+	const client = postgres(dbUrl, { ssl: { rejectUnauthorized: false }, max: 5, connect_timeout: 10 });
 	_db = pgDrizzle(client, { schema });
 	patchBuilder(_db);
 } else {
