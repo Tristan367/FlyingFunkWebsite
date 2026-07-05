@@ -19,9 +19,35 @@ async function createConnection() {
 	}
 }
 
+// Wrap PostgreSQL queries to add SQLite-compatible .get() and .all() methods
+function wrapPg(db: any): any {
+	return new Proxy(db, {
+		get(target, prop) {
+			const original = target[prop];
+			if (typeof original === 'function') {
+				return (...args: any[]) => {
+					const result = original.apply(target, args);
+					if (result && typeof result.then === 'function') {
+						const enhanced = result.then((rows: any) => {
+							// Add .get() method (SQLite compat) — returns first row
+							rows.get = () => rows[0] ?? null;
+							// Add .all() method (SQLite compat) — returns all rows
+							rows.all = () => rows;
+							return rows;
+						});
+						return enhanced;
+					}
+					return result;
+				};
+			}
+			return original;
+		}
+	});
+}
+
 function getDb(): any {
 	if (!_db) {
-		_db = createConnection();
+		_db = createConnection().then((d) => isPostgres ? wrapPg(d) : d);
 	}
 	return _db;
 }

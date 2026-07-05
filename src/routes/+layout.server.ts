@@ -17,7 +17,7 @@ export async function load({ locals, cookies }) {
 			)
 		)
 		.orderBy(schema.gigs.date)
-		.all();
+		.limit(10);
 
 	const blogPosts = await db
 		.select({
@@ -30,12 +30,11 @@ export async function load({ locals, cookies }) {
 		.innerJoin(schema.members, eq(schema.blogPosts.authorId, schema.members.id))
 		.where(sql`${schema.blogPosts.publishedAt} != '' AND ${schema.blogPosts.archived} = 0`)
 		.orderBy(desc(schema.blogPosts.publishedAt))
-		.limit(3)
-		.all();
+		.limit(3);
 
 	const theme = cookies.get('theme') || 'funk';
 
-	const config = await db
+	const configRows = await db
 		.select({
 			instagram: schema.siteConfig.instagram,
 			facebook: schema.siteConfig.facebook,
@@ -43,13 +42,13 @@ export async function load({ locals, cookies }) {
 			spotify: schema.siteConfig.spotify
 		})
 		.from(schema.siteConfig)
-		.get();
+		.limit(1);
 
 	return {
 		user: locals.user,
 		upcomingGigs,
 		blogPosts,
 		theme,
-		social: config || {}
+		social: configRows[0] || {}
 	};
 }
