@@ -123,7 +123,7 @@
 </div>
 
 {#if showDelete}
-	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog" onclick={() => showDelete = null}>
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog" onclick={() => showDelete = false}>
 		<div class="w-full max-w-sm rounded-xl border border-zinc-700 bg-zinc-900 p-6 shadow-2xl" onclick={(e) => e.stopPropagation()}>
 			<h3 class="mb-2 text-lg font-bold text-red-400">Delete Gig?</h3>
 			<p class="mb-4 text-sm text-zinc-400">This permanently removes the gig. This cannot be undone.</p>
@@ -131,7 +131,7 @@
 				<form method="POST" action="?/delete" class="contents">
 					<button type="submit" class="flex-1 rounded-lg bg-red-600 px-4 py-2.5 font-bold text-white hover:bg-red-500">Delete</button>
 				</form>
-				<button type="button" onclick={() => showDelete = null}
+				<button type="button" onclick={() => showDelete = false}
 					class="flex-1 rounded-lg border border-zinc-700 px-4 py-2.5 text-sm text-zinc-400 hover:border-zinc-500">Cancel</button>
 			</div>
 		</div>

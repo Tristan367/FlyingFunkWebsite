@@ -83,7 +83,13 @@
 	});
 
 	function switchMode(m: 'rich' | 'html') { mode = m; }
-	function isActive(name: string, a?: Record<string, unknown>) { return editorInstance?.isActive(name, a) ?? false; }
+	function isActive(name: string | Record<string, unknown>, a?: Record<string, unknown>) {
+		return (
+			(typeof name === 'string'
+				? editorInstance?.isActive(name, a)
+				: editorInstance?.isActive(name)) ?? false
+		);
+	}
 	function toggleBold() { editorInstance?.chain().toggleBold().run(); }
 	function toggleItalic() { editorInstance?.chain().toggleItalic().run(); }
 	function toggleUnderline() { editorInstance?.chain().toggleUnderline().run(); }

@@ -1,21 +1,23 @@
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import * as schema from './schema';
 
 const dbUrl = process.env.DATABASE_URL || 'file:local.db';
 const isPostgres = dbUrl.startsWith('postgresql://') || dbUrl.startsWith('postgres://');
 
-let db: any;
+let _db: PostgresJsDatabase<typeof schema>;
 
 if (isPostgres) {
 	const { drizzle: pgDrizzle } = await import('drizzle-orm/postgres-js');
 	const postgres = (await import('postgres')).default;
 	const client = postgres(dbUrl, { ssl: 'require' });
-	db = pgDrizzle(client, { schema });
-	patchBuilder(db);
+	_db = pgDrizzle(client, { schema });
+	patchBuilder(_db);
 } else {
 	const { drizzle: libDrizzle } = await import('drizzle-orm/libsql');
 	const { createClient } = await import('@libsql/client');
 	const client = createClient({ url: dbUrl });
-	db = libDrizzle(client, { schema });
+	// libsql instance is structurally compatible for our usage (schema-typed).
+	_db = libDrizzle(client, { schema }) as unknown as PostgresJsDatabase<typeof schema>;
 }
 
 /**
@@ -28,15 +30,15 @@ if (isPostgres) {
  * The builder MUST stay synchronous so chaining works
  * (`db.select().from(x).where(...)`); we only add terminal helpers.
  */
-function patchBuilder(instance: any) {
+function patchBuilder(instance: PostgresJsDatabase<typeof schema>) {
 	// Reach the builder prototype chain via a throwaway builder instance.
-	const builder: any = instance.select().from(schema.members as any);
+	const builder: object = instance.select().from(schema.members);
 	let proto = Object.getPrototypeOf(builder);
 	while (proto && proto !== Object.prototype) {
 		if (!('all' in proto)) {
 			Object.defineProperty(proto, 'all', {
 				value: function () {
-					return Promise.resolve(this).then((rows: any[]) => rows);
+					return Promise.resolve(this).then((rows: unknown[]) => rows);
 				},
 				writable: true,
 				configurable: true,
@@ -46,7 +48,7 @@ function patchBuilder(instance: any) {
 		if (!('get' in proto)) {
 			Object.defineProperty(proto, 'get', {
 				value: function () {
-					return Promise.resolve(this).then((rows: any[]) => rows[0] ?? null);
+					return Promise.resolve(this).then((rows: unknown[]) => rows[0] ?? null);
 				},
 				writable: true,
 				configurable: true,
@@ -57,4 +59,4 @@ function patchBuilder(instance: any) {
 	}
 }
 
-export { db };
+export const db = _db;
