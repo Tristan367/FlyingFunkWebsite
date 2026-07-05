@@ -1,0 +1,12 @@
+node_modules/
+.svelte-kit/
+build/
+local.db
+local.db-journal
+drizzle/
+static/uploads/*
+!static/uploads/.gitkeep
+.env
+.env.local
+*.log
+.DS_Store

@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Righteous&family=Inter:wght@400;600;700;900&display=swap');
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@layer base {
+	button,
+	a,
+	label,
+	select,
+	input[type='checkbox'],
+	input[type='radio'],
+	input[type='file'],
+	[role='button'] {
+		cursor: pointer;
+	}
+
+	button:disabled,
+	input:disabled,
+	[aria-disabled='true'] {
+		cursor: default;
+	}
+}
+
+/* === Theme System === */
+:root,
+[data-theme='funk'] {
+	--color-accent: oklch(76.9% 0.188 70.08);
+	--color-accent-soft: oklch(76.9% 0.188 70.08 / 0.15);
+	--color-accent-text: oklch(82.8% 0.189 84.429);
+	--color-accent-dark: oklch(70% 0.17 65);
+	--font-display: 'Righteous', system-ui, sans-serif;
+	--bg-color: #09090b;
+}
+
+[data-theme='christmas'] {
+	--color-accent: oklch(55% 0.24 25);
+	--color-accent-soft: oklch(55% 0.24 25 / 0.2);
+	--color-accent-text: oklch(60% 0.22 30);
+	--color-accent-dark: oklch(45% 0.22 25);
+	--font-display: 'Righteous', system-ui, sans-serif;
+	--bg-color: #0a0a0a;
+}
+
+/* Christmas theme background */
+[data-theme='christmas'] body,
+[data-theme='christmas'] .bg-zinc-950 {
+	background: linear-gradient(180deg, #1a0a0a 0%, #0d1f0d 40%, #1a1a0a 100%) !important;
+}
+
+[data-theme='christmas'] .text-amber-400 { color: oklch(60% 0.22 30) !important; }
+[data-theme='christmas'] .text-amber-500 { color: oklch(55% 0.24 25) !important; }
+[data-theme='christmas'] .bg-amber-500 { background-color: oklch(55% 0.24 25) !important; }
+[data-theme='christmas'] .bg-amber-500\/10 { background-color: oklch(55% 0.24 25 / 0.15) !important; }
+[data-theme='christmas'] .bg-amber-500\/20 { background-color: oklch(55% 0.24 25 / 0.2) !important; }
+[data-theme='christmas'] .border-amber-500 { border-color: oklch(55% 0.24 25) !important; }
+[data-theme='christmas'] .ring-amber-400 { --tw-ring-color: oklch(60% 0.22 30) !important; }
+[data-theme='christmas'] .hover\:bg-amber-400:hover { background-color: oklch(50% 0.22 25) !important; }
+[data-theme='christmas'] .hover\:text-amber-400:hover { color: oklch(60% 0.22 30) !important; }
+[data-theme='christmas'] .hover\:border-amber-500:hover { border-color: oklch(55% 0.24 25) !important; }
+[data-theme='christmas'] .focus\:border-amber-500:focus { border-color: oklch(55% 0.24 25) !important; }
+[data-theme='christmas'] .accent-amber-500 { accent-color: oklch(55% 0.24 25) !important; }
+[data-theme='christmas'] .border-amber-500\/10 { border-color: oklch(55% 0.24 25 / 0.15) !important; }
+
+[data-theme='dark'] {
+	--color-accent: oklch(65% 0.15 280);
+	--color-accent-soft: oklch(65% 0.15 280 / 0.15);
+	--color-accent-text: oklch(70% 0.18 280);
+	--color-accent-dark: oklch(55% 0.15 280);
+	--font-display: 'Righteous', system-ui, sans-serif;
+	--bg-color: #09090b;
+}
+
+html {
+	font-family: 'Inter', system-ui, sans-serif;
+}
+
+h1, h2, h3, .font-display {
+	font-family: var(--font-display);
+	letter-spacing: 0.02em;
+}
+
+/* === Theme-aware overrides === */
+.text-amber-400 { color: var(--color-accent-text) !important; }
+.text-amber-500 { color: var(--color-accent) !important; }
+.bg-amber-500 { background-color: var(--color-accent) !important; }
+.bg-amber-500\/10 { background-color: var(--color-accent-soft) !important; }
+.bg-amber-500\/20 { background-color: var(--color-accent-soft) !important; }
+.border-amber-500 { border-color: var(--color-accent) !important; }
+.ring-amber-400 { --tw-ring-color: var(--color-accent-text) !important; }
+.shadow-amber-500\/10 { --tw-shadow-color: var(--color-accent-soft) !important; }
+.shadow-amber-500\/20 { --tw-shadow-color: var(--color-accent-soft) !important; }
+.hover\:bg-amber-400:hover { background-color: var(--color-accent-dark) !important; }
+.hover\:text-amber-400:hover { color: var(--color-accent-text) !important; }
+.hover\:border-amber-500:hover { border-color: var(--color-accent) !important; }
+.focus\:border-amber-500:focus { border-color: var(--color-accent) !important; }
+.accent-amber-500 { accent-color: var(--color-accent) !important; }
+.border-amber-500\/10 { border-color: var(--color-accent-soft) !important; }
+
+/* Improve small-text readability on dark backgrounds for older eyes */
+.text-zinc-500 { color: oklch(70% 0.01 280) !important; }
+.text-zinc-600 { color: oklch(60% 0.01 280) !important; }
+
+/* Tighter spacing on mobile for non-homepage pages */
+@media (max-width: 640px) {
+	.pt-20 { padding-top: 1.5rem !important; }
+	.py-20 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+	.pb-20 { padding-bottom: 1.5rem !important; }
+	.pt-16 { padding-top: 1.5rem !important; }
+	.py-16 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+}
