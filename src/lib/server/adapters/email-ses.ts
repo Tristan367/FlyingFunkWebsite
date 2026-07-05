@@ -10,7 +10,7 @@ const HOST = process.env.SES_SMTP_HOST || 'email-smtp.us-west-2.amazonaws.com';
 const PORT = parseInt(process.env.SES_SMTP_PORT || '587');
 const USER = INJECTED_USER.startsWith('REPLACE_') ? '' : INJECTED_USER;
 const PASS = INJECTED_PASS.startsWith('REPLACE_') ? '' : INJECTED_PASS;
-const FROM = INJECTED_FROM.startsWith('REPLACE_') ? 't_johnson367@outlook.com' : INJECTED_FROM;
+const FROM = INJECTED_FROM.startsWith('REPLACE_') ? 'mjcmusic87@gmail.com' : INJECTED_FROM;
 const SITE_NAME = 'Flying Funk';
 
 const transporter = nodemailer.createTransport({
