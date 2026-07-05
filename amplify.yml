@@ -7,6 +7,7 @@ frontend:
     build:
       commands:
         - npm run build
+        - cd build/compute/default && npm i --omit=dev
   artifacts:
     baseDirectory: build
     files:
