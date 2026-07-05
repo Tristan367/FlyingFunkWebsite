@@ -1,14 +1,17 @@
 import nodemailer from 'nodemailer';
 import type { EmailAdapter } from './types';
 
+// Injected at build time by amplify.yml (same pattern as DATABASE_URL)
+const INJECTED_USER = 'REPLACE_WITH_SES_USER';
+const INJECTED_PASS = 'REPLACE_WITH_SES_PASS';
+const INJECTED_FROM = 'REPLACE_WITH_SES_FROM_ADDRESS';
+
 const HOST = process.env.SES_SMTP_HOST || 'email-smtp.us-west-2.amazonaws.com';
 const PORT = parseInt(process.env.SES_SMTP_PORT || '587');
-const USER = process.env.SES_SMTP_USER || '';
-const PASS = process.env.SES_SMTP_PASS || '';
-const FROM = process.env.SES_FROM_ADDRESS || 't_johnson367@outlook.com';
+const USER = INJECTED_USER.startsWith('REPLACE_') ? '' : INJECTED_USER;
+const PASS = INJECTED_PASS.startsWith('REPLACE_') ? '' : INJECTED_PASS;
+const FROM = INJECTED_FROM.startsWith('REPLACE_') ? 't_johnson367@outlook.com' : INJECTED_FROM;
 const SITE_NAME = 'Flying Funk';
-
-console.log('[SES Adapter] Init — USER present:', !!USER, 'PASS present:', !!PASS, 'FROM:', FROM, 'HOST:', HOST);
 
 const transporter = nodemailer.createTransport({
 	host: HOST,
