@@ -8,6 +8,7 @@ frontend:
       commands:
         - npm run build
         - cd build/compute/default && npm i --omit=dev
+        - node -e "require('fs').writeFileSync('build/compute/default/env.json', JSON.stringify({DATABASE_URL:process.env.DATABASE_URL,SESSION_SECRET:process.env.SESSION_SECRET}))"
   artifacts:
     baseDirectory: build
     files:
