@@ -26,7 +26,10 @@ export const actions = {
 		// Send via email adapter (logs to console in dev, sends via SES in prod)
 		try {
 			await getEmail().sendVerificationCode(member.email, code);
-		} catch {}
+		} catch (e) {
+			console.error('Failed to send verification code:', e);
+			return { step: 'email', email: identifier, error: 'Failed to send verification email. Please try again or contact support.' };
+		}
 
 		return {
 			step: 'verify',

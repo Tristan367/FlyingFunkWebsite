@@ -3,6 +3,7 @@ import * as schema from '$lib/server/db/schema';
 import { desc, sql, eq, and } from 'drizzle-orm';
 
 export async function load() {
+	console.log('[blog/+page] load() called');
 	const posts = await db
 		.select({
 			id: schema.blogPosts.id,
@@ -21,11 +22,12 @@ export async function load() {
 		.orderBy(desc(schema.blogPosts.publishedAt))
 		.all()
 		.catch((e) => {
-			console.error('Blog index query error:', e);
+			console.error('[blog/+page] Blog index query error:', e);
 			throw e;
 		});
 
-	console.log('Blog posts found:', posts?.length);
+	console.log('[blog/+page] Blog posts found:', posts?.length, 'type:', typeof posts, 'isArray:', Array.isArray(posts));
+	if (posts?.length > 0) console.log('[blog/+page] First post slug:', posts[0]?.slug);
 
 	return { posts };
 }
