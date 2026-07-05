@@ -1,8 +1,9 @@
+import { dev } from '$app/environment';
 import type { StorageAdapter, EmailAdapter } from './types';
 import { LocalStorageAdapter } from './storage-local';
 import { ConsoleEmailAdapter } from './email-console';
+import { SESEmailAdapter } from './email-ses';
 
-// In production, swap these to S3StorageAdapter and SESEmailAdapter
 let _storage: StorageAdapter | null = null;
 let _email: EmailAdapter | null = null;
 
@@ -12,6 +13,8 @@ export function getStorage(): StorageAdapter {
 }
 
 export function getEmail(): EmailAdapter {
-	if (!_email) _email = new ConsoleEmailAdapter();
+	if (!_email) {
+		_email = dev ? new ConsoleEmailAdapter() : new SESEmailAdapter();
+	}
 	return _email;
 }

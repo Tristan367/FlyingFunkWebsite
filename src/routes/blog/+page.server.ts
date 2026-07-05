@@ -19,7 +19,13 @@ export async function load() {
 			eq(schema.blogPosts.archived, false)
 		))
 		.orderBy(desc(schema.blogPosts.publishedAt))
-		.all();
+		.all()
+		.catch((e) => {
+			console.error('Blog index query error:', e);
+			throw e;
+		});
+
+	console.log('Blog posts found:', posts?.length);
 
 	return { posts };
 }
