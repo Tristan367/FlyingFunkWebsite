@@ -1,1 +1,0 @@
-function e(e){let t=(e||``).toLowerCase();return t.includes(`guitar`)||t.includes(`bass`)?`🎸`:t.includes(`drum`)?`🥁`:t.includes(`vocal`)||t.includes(`sing`)?`🎤`:t.includes(`key`)||t.includes(`piano`)?`🎹`:t.includes(`trumpet`)?`🎺`:t.includes(`sax`)?`🎷`:t.includes(`trombon`)?`🎺`:``}export{e as t};

@@ -10,3 +10,5 @@ static/uploads/*
 .env.local
 *.log
 .DS_Store
+.amplify-hosting/
+.vercel/
