@@ -8,11 +8,13 @@ const PASS = process.env.SES_SMTP_PASS || '';
 const FROM = process.env.SES_FROM_ADDRESS || 't_johnson367@outlook.com';
 const SITE_NAME = 'Flying Funk';
 
+console.log('[SES Adapter] Init — USER present:', !!USER, 'PASS present:', !!PASS, 'FROM:', FROM, 'HOST:', HOST);
+
 const transporter = nodemailer.createTransport({
 	host: HOST,
 	port: PORT,
 	secure: false,
-	auth: { user: USER, pass: PASS }
+	auth: USER ? { user: USER, pass: PASS } : undefined
 });
 
 export class SESEmailAdapter implements EmailAdapter {
