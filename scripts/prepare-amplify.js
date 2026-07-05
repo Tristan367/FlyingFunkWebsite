@@ -1,33 +1,31 @@
 #!/usr/bin/env node
-import { writeFileSync, cpSync, mkdirSync, existsSync, rmSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync, cpSync, mkdirSync } from 'fs';
 
-const BUILD = 'build';
-const OUT = 'deploy';
+const computeDir = 'build/compute/default';
+const pkgPath = `${computeDir}/package.json`;
 
-rmSync(OUT, { recursive: true, force: true });
-mkdirSync(`${OUT}/compute/default`, { recursive: true });
-mkdirSync(`${OUT}/static`, { recursive: true });
+if (!existsSync(pkgPath)) process.exit(0);
 
-// Copy server
-cpSync(`${BUILD}/index.js`, `${OUT}/compute/default/index.js`);
-for (const f of ['handler.js', 'env.js', 'shims.js']) {
-	if (existsSync(`${BUILD}/${f}`)) cpSync(`${BUILD}/${f}`, `${OUT}/compute/default/${f}`);
-	if (existsSync(`${BUILD}/${f}.map`)) cpSync(`${BUILD}/${f}.map`, `${OUT}/compute/default/${f}.map`);
+// Copy node_modules that the SSR server needs at runtime
+const modules = ['postgres', 'drizzle-orm', '@libsql', '@neon-rs'];
+const nmSource = 'node_modules';
+const nmDest = `${computeDir}/node_modules`;
+
+for (const mod of modules) {
+	const src = `${nmSource}/${mod}`;
+	const dest = `${nmDest}/${mod}`;
+	if (existsSync(src)) {
+		mkdirSync(dest.split('/').slice(0, -1).join('/'), { recursive: true });
+		cpSync(src, dest, { recursive: true });
+		console.log(`Copied ${mod}`);
+	}
 }
-if (existsSync(`${BUILD}/server`)) cpSync(`${BUILD}/server`, `${OUT}/compute/default/server`, { recursive: true });
-if (existsSync(`${BUILD}/client`)) cpSync(`${BUILD}/client`, `${OUT}/static`, { recursive: true });
 
-writeFileSync(`${OUT}/deploy-manifest.json`, JSON.stringify({
-	version: 1,
-	framework: { name: 'sveltekit' },
-	routes: [
-		{ path: '/_app/*', target: { kind: 'Static' } },
-		{ path: '/uploads/*', target: { kind: 'Static' } },
-		{ path: '/favicon.ico', target: { kind: 'Static' } },
-		{ path: '/robots.txt', target: { kind: 'Static' } },
-		{ path: '/*', target: { kind: 'Compute', src: 'default' } }
-	],
-	computeResources: [{ name: 'default', runtime: 'nodejs20.x', entrypoint: 'index.js' }]
-}, null, 2));
-
-console.log('Deploy structure created in deploy/');
+// Update package.json with dependency info
+const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+pkg.dependencies = pkg.dependencies || {};
+for (const mod of modules) {
+	pkg.dependencies[mod] = '*';
+}
+writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
+console.log('Amplify SSR package prepared');
