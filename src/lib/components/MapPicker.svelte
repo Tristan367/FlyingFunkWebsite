@@ -131,7 +131,14 @@
 			maxZoom: 19
 		}).addTo(map);
 
-		marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+		const pinIcon = L.divIcon({
+			className: 'custom-pin',
+			html: `<div style="width:30px;height:30px;background:#f59e0b;border:3px solid #d97706;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:2px 2px 4px rgba(0,0,0,0.4)"></div>`,
+			iconSize: [30, 30],
+			iconAnchor: [15, 30]
+		});
+
+		marker = L.marker([lat, lng], { draggable: true, icon: pinIcon }).addTo(map);
 
 		marker.on('dragend', () => movePin(marker.getLatLng()));
 		map.on('click', (e: any) => movePin(e.latlng));
