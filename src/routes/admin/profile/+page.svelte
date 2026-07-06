@@ -149,10 +149,17 @@
 	<div>
 		<div class="mb-1 flex items-center justify-between">
 			<label class="text-sm text-zinc-400">Bio</label>
-			<button type="button" onclick={() => bio = PROFILE_TEMPLATE}
-				class="rounded border border-zinc-700 px-2 py-0.5 text-xs text-zinc-500 hover:border-amber-500 hover:text-amber-400">
-				Load Template
-			</button>
+			<details class="group relative">
+				<summary class="cursor-pointer rounded border border-zinc-700 px-2 py-0.5 text-xs text-zinc-500 hover:border-amber-500 hover:text-amber-400 list-none">Template ▾</summary>
+				<div class="absolute right-0 top-7 z-10 w-72 rounded-lg border border-zinc-600 bg-zinc-800 p-3 shadow-xl">
+					<p class="mb-2 text-xs text-zinc-400">Paste this in <strong class="text-amber-400">HTML mode</strong>:</p>
+					<pre class="max-h-64 overflow-auto rounded bg-zinc-900 p-2 text-xs text-zinc-300"><code>{PROFILE_TEMPLATE}</code></pre>
+					<button type="button" onclick={() => navigator.clipboard.writeText(PROFILE_TEMPLATE)}
+						class="mt-2 rounded bg-amber-500 px-3 py-1 text-xs font-bold text-zinc-900 hover:bg-amber-400 w-full">
+						Copy to Clipboard
+					</button>
+				</div>
+			</details>
 		</div>
 		<ImageManager scope={'profile-' + data.member.id} onImagesChanged={(imgs) => activeImages = imgs} />
 
