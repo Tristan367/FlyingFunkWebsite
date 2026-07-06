@@ -10,6 +10,10 @@ const dbUrl = INJECTED_URL.startsWith('postgresql://')
 	? INJECTED_URL
 	: process.env.DATABASE_URL || '';
 
+console.log('[db] INJECTED_URL:', INJECTED_URL.substring(0, 20));
+console.log('[db] process.env.DATABASE_URL:', process.env.DATABASE_URL);
+console.log('[db] resolved dbUrl:', dbUrl.substring(0, 30));
+
 if (!dbUrl && typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
 	// Deliberately empty — defer error to first query at runtime
 	// During SvelteKit build analysis, DATABASE_URL may not be set and we shouldn't throw
