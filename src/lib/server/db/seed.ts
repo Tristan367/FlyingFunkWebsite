@@ -39,28 +39,6 @@ function daysFromNow(days: number): string {
 	return d.toISOString().split('T')[0];
 }
 
-// Matt: unavailable on Sundays
-await db.insert(schema.recurringUnavailability).values([
-	{ memberId: 'm3', dayOfWeek: 0 }, // Sunday
-]);
-// Johnny: unavailable on Thursdays
-await db.insert(schema.recurringUnavailability).values([
-	{ memberId: 'm4', dayOfWeek: 4 }, // Thursday
-]);
-// Mike: unavailable on Mondays
-await db.insert(schema.recurringUnavailability).values([
-	{ memberId: 'm7', dayOfWeek: 1 }, // Monday
-]);
-// Mik: unavailable on Tuesdays
-await db.insert(schema.recurringUnavailability).values([
-	{ memberId: 'm8', dayOfWeek: 2 }, // Tuesday
-]);
-// Jim: unavailable on Wednesdays + holidays
-await db.insert(schema.recurringUnavailability).values([
-	{ memberId: 'm9', dayOfWeek: 3 }, // Wednesday
-]);
-await db.update(schema.members).set({ unavailableOnHolidays: true }).where(eq(schema.members.id, 'm9'));
-
 // Sample gigs
 await db.insert(schema.gigs).values([
 	{ date: daysFromNow(3), time: '9:00 PM', venue: "O'Malley's Pub", venueAddress: "110 S Madison St, Spokane, WA", description: 'Friday night funk party!', rate: '$1000', withHorns: true, status: 'confirmed' },

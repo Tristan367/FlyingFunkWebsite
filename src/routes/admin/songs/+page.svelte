@@ -35,14 +35,13 @@
 		data.append('filename', file.name);
 
 		const res = await fetch('?/upload', { method: 'POST', body: data });
-		const json = await res.json();
-		if (json.uploadSuccess) {
+		if (res.ok) {
 			songTitle = '';
 			songDesc = '';
 			fileInput.value = '';
 			showUpload = false;
 		} else {
-			uploadError = json.uploadError || 'Upload failed';
+			uploadError = 'Upload failed';
 		}
 		uploading = false;
 	}
