@@ -79,7 +79,12 @@
 	<p class="mb-6 rounded-lg border border-green-700 bg-green-900/20 p-3 text-sm text-green-400">Profile saved!</p>
 {/if}
 
-<div class="mb-6 flex justify-end">
+<div class="mb-6 flex flex-wrap items-center justify-end gap-3">
+	{#if slug && bio}
+		<a href="/{slug}" target="_blank" class="rounded-lg border border-zinc-700 px-4 py-3 text-sm font-medium text-zinc-300 transition-colors hover:border-amber-500 hover:text-amber-400">
+			View Profile Page
+		</a>
+	{/if}
 	<button type="submit" form="profile-form"
 		class="rounded-lg bg-amber-500 px-6 py-3 font-bold text-zinc-900 transition-all hover:bg-amber-400 hover:shadow-lg hover:shadow-amber-500/20">
 		Save Profile

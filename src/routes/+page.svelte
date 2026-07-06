@@ -17,7 +17,7 @@
 		<div class="absolute inset-0 flex items-center justify-center">
 			<div style="width:1200px;height:100%;position:relative">
 				<img src={data.config.heroImage} alt="" style="width:1200px;height:100%;object-fit:cover;display:block" />
-				<div style="position:absolute;inset:0;background:radial-gradient(ellipse 50% 50% at 50% 50%,transparent 0%,var(--bg-color,#09090b) 100%)"></div>
+				<div style="position:absolute;inset:0;background:linear-gradient(to right,var(--bg-color,#09090b) 0%,transparent 15%,transparent 85%,var(--bg-color,#09090b) 100%),linear-gradient(to bottom,var(--bg-color,#09090b) 0%,transparent 15%,transparent 85%,var(--bg-color,#09090b) 100%)"></div>
 			</div>
 		</div>
 	{/if}
