@@ -147,20 +147,18 @@
 	</div>
 
 	<div>
-		<div class="mb-1 flex items-center justify-between">
-			<label class="text-sm text-zinc-400">Bio</label>
-			<details class="group relative">
-				<summary class="cursor-pointer rounded border border-zinc-700 px-2 py-0.5 text-xs text-zinc-500 hover:border-amber-500 hover:text-amber-400 list-none">Template ▾</summary>
-				<div class="absolute right-0 top-7 z-10 w-72 rounded-lg border border-zinc-600 bg-zinc-800 p-3 shadow-xl">
-					<p class="mb-2 text-xs text-zinc-400">Paste this in <strong class="text-amber-400">HTML mode</strong>:</p>
-					<pre class="max-h-64 overflow-auto rounded bg-zinc-900 p-2 text-xs text-zinc-300"><code>{PROFILE_TEMPLATE}</code></pre>
-					<button type="button" onclick={() => navigator.clipboard.writeText(PROFILE_TEMPLATE)}
-						class="mt-2 rounded bg-amber-500 px-3 py-1 text-xs font-bold text-zinc-900 hover:bg-amber-400 w-full">
-						Copy to Clipboard
-					</button>
-				</div>
-			</details>
-		</div>
+		<label class="mb-1 block text-sm text-zinc-400">Bio</label>
+		<details class="mb-3">
+			<summary class="cursor-pointer rounded border border-amber-700/50 bg-amber-500/5 px-3 py-1.5 text-xs text-amber-400 hover:bg-amber-500/10 list-none">📋 Profile Template</summary>
+			<div class="mt-2 rounded-lg border border-zinc-700 bg-zinc-900 p-3">
+				<p class="mb-2 text-xs text-zinc-400">Paste this in <strong class="text-amber-400">HTML mode</strong>, then customize:</p>
+				<pre class="max-h-72 overflow-auto rounded bg-zinc-950 p-3 text-xs text-zinc-300 leading-relaxed"><code>{PROFILE_TEMPLATE}</code></pre>
+				<button type="button" onclick={() => navigator.clipboard.writeText(PROFILE_TEMPLATE)}
+					class="mt-2 rounded bg-amber-500 px-4 py-1.5 text-xs font-bold text-zinc-900 hover:bg-amber-400">
+					Copy to Clipboard
+				</button>
+			</div>
+		</details>
 		<ImageManager scope={'profile-' + data.member.id} onImagesChanged={(imgs) => activeImages = imgs} />
 
 		<div class="mt-4">
