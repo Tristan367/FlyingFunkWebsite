@@ -1,6 +1,7 @@
 import { db } from '$lib/server/db';
 import * as schema from '$lib/server/db/schema';
 import { desc, eq } from 'drizzle-orm';
+import { getStorage } from '$lib/server/adapters';
 
 export async function load({ locals }) {
 	const songs = await db
@@ -32,21 +33,15 @@ export const actions = {
 		if (!title || !file) return { uploadError: 'Title and file are required.' };
 		if (!file.type.startsWith('audio/')) return { uploadError: 'Please upload an audio file.' };
 
-		const suffix = Date.now() + '-' + Math.random().toString(36).slice(2, 8);
-		const filename = suffix + '-' + file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-		const { mkdirSync, existsSync } = await import('node:fs');
-		const { writeFile } = await import('node:fs/promises');
-		if (!existsSync('static/uploads')) mkdirSync('static/uploads', { recursive: true });
-
-		const buffer = Buffer.from(await file.arrayBuffer());
-		await writeFile('static/uploads/' + filename, buffer);
+		const storage = getStorage();
+		const { url, filename } = await storage.saveFile(file, locals.user!.id);
 
 		await db.insert(schema.songs).values({
 			uploaderId: locals.user!.id,
 			title,
 			description,
 			filename,
-			path: '/uploads/' + filename
+			path: url
 		});
 
 		return { uploadSuccess: true };
