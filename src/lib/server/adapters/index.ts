@@ -1,6 +1,7 @@
 import { dev } from '$app/environment';
 import type { StorageAdapter, EmailAdapter } from './types';
 import { LocalStorageAdapter } from './storage-local';
+import { S3StorageAdapter } from './storage-s3';
 import { ConsoleEmailAdapter } from './email-console';
 import { SESEmailAdapter } from './email-ses';
 
@@ -8,7 +9,9 @@ let _storage: StorageAdapter | null = null;
 let _email: EmailAdapter | null = null;
 
 export function getStorage(): StorageAdapter {
-	if (!_storage) _storage = new LocalStorageAdapter();
+	if (!_storage) {
+		_storage = dev ? new LocalStorageAdapter() : new S3StorageAdapter();
+	}
 	return _storage;
 }
 

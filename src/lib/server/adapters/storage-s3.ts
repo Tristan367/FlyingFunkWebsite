@@ -1,22 +1,32 @@
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import type { StorageAdapter } from './types';
 
-// Placeholder for AWS S3 implementation
-// Will use @aws-sdk/client-s3 and @aws-sdk/s3-request-presigner
+const BUCKET = process.env.STORAGE_BUCKET || 'flyingfunk-uploads';
+const REGION = process.env.APP_REGION || 'us-west-2';
+
+const s3 = new S3Client({ region: REGION });
+
 export class S3StorageAdapter implements StorageAdapter {
-	private bucket: string;
+	async saveFile(file: File, memberId: string) {
+		const suffix = Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+		const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+		const key = `${memberId}/${suffix}-${safeName}`;
+		const buffer = Buffer.from(await file.arrayBuffer());
 
-	constructor(bucket: string) {
-		this.bucket = bucket;
+		await s3.send(
+			new PutObjectCommand({
+				Bucket: BUCKET,
+				Key: key,
+				Body: buffer,
+				ContentType: file.type
+			})
+		);
+
+		const url = `https://${BUCKET}.s3.${REGION}.amazonaws.com/${key}`;
+		return { url, filename: file.name };
 	}
 
-	async saveFile(_file: File, _memberId: string): Promise<{ url: string; filename: string }> {
-		// TODO: Upload to S3 with key = `uploads/${memberId}/${timestamp}-${filename}`
-		// Return CloudFront URL
-		throw new Error('S3 adapter not yet implemented — set up AWS credentials first');
-	}
-
-	async deleteFile(_path: string) {
-		// TODO: Delete from S3
-		throw new Error('S3 adapter not yet implemented');
+	async deleteFile(path: string) {
+		// Not needed yet — images table handles tracking
 	}
 }
