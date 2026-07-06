@@ -1,17 +1,20 @@
 import { db } from './index';
 import * as schema from './schema';
 import { eq } from 'drizzle-orm';
+import { hash } from '@node-rs/argon2';
+
+const defaultPassword = await hash('funk2026');
 
 const members = [
-	{ id: 'm1', name: 'Tristan', email: 't_johnson367@outlook.com', phone: '509-555-0001', instrument: 'Guitar', instruments: 'guitar, bass', unavailableOnHolidays: false, address: 'Spokane, WA', slug: 'tristan' },
-	{ id: 'm2', name: 'Madi', email: 'mjcmusic87@gmail.com', phone: '509-555-0002', instrument: 'Vocals', instruments: 'vocals', unavailableOnHolidays: false, address: 'Spokane, WA', slug: 'madi' },
-	{ id: 'm3', name: 'Matt', email: 'matt@flyingfunk.com', phone: '509-555-0003', instrument: 'Drums', instruments: 'drums', unavailableOnHolidays: false, address: 'Spokane Valley, WA', slug: 'matt' },
-	{ id: 'm4', name: 'Johnny', email: 'johnny@flyingfunk.com', phone: '509-555-0004', instrument: 'Keys', instruments: 'keys', unavailableOnHolidays: false, address: 'Spokane, WA', slug: 'johnny' },
-	{ id: 'm5', name: 'Stefan', email: 'stefan@flyingfunk.com', phone: '208-555-0005', instrument: 'Bass', instruments: 'bass, keys', unavailableOnHolidays: false, address: 'Coeur d\'Alene, ID', slug: 'stefan' },
-	{ id: 'm6', name: 'Robert', email: 'robert@flyingfunk.com', phone: '509-555-0010', instrument: 'Bass', instruments: 'bass', unavailableOnHolidays: false, address: 'Spokane, WA', slug: 'robert' },
-	{ id: 'm7', name: 'Mike', email: 'mike@flyingfunk.com', phone: '509-555-0006', instrument: 'Trumpet', instruments: 'trumpet', unavailableOnHolidays: false, address: 'Cheney, WA', slug: 'mike' },
-	{ id: 'm8', name: 'Mik', email: 'mik@flyingfunk.com', phone: '208-555-0007', instrument: 'Saxophone', instruments: 'saxophone', unavailableOnHolidays: false, address: 'Post Falls, ID', slug: 'mik' },
-	{ id: 'm9', name: 'Jim', email: 'jim@flyingfunk.com', phone: '509-555-0008', instrument: 'Trombone', instruments: 'trombone', unavailableOnHolidays: false, address: 'Liberty Lake, WA', slug: 'jim' }
+	{ id: 'm1', name: 'Tristan', email: 't_johnson367@outlook.com', phone: '509-555-0001', instrument: 'Guitar', instruments: 'guitar, bass', password: defaultPassword, unavailableOnHolidays: false, address: 'Spokane, WA', slug: 'tristan' },
+	{ id: 'm2', name: 'Madi', email: 'mjcmusic87@gmail.com', phone: '509-555-0002', instrument: 'Vocals', instruments: 'vocals', password: defaultPassword, unavailableOnHolidays: false, address: 'Spokane, WA', slug: 'madi' },
+	{ id: 'm3', name: 'Matt', email: 'matt@flyingfunk.com', phone: '509-555-0003', instrument: 'Drums', instruments: 'drums', password: defaultPassword, unavailableOnHolidays: false, address: 'Spokane Valley, WA', slug: 'matt' },
+	{ id: 'm4', name: 'Johnny', email: 'johnny@flyingfunk.com', phone: '509-555-0004', instrument: 'Keys', instruments: 'keys', password: defaultPassword, unavailableOnHolidays: false, address: 'Spokane, WA', slug: 'johnny' },
+	{ id: 'm5', name: 'Stefan', email: 'stefan@flyingfunk.com', phone: '208-555-0005', instrument: 'Bass', instruments: 'bass, keys', password: defaultPassword, unavailableOnHolidays: false, address: 'Coeur d\'Alene, ID', slug: 'stefan' },
+	{ id: 'm6', name: 'Robert', email: 'robert@flyingfunk.com', phone: '509-555-0010', instrument: 'Bass', instruments: 'bass', password: defaultPassword, unavailableOnHolidays: false, address: 'Spokane, WA', slug: 'robert' },
+	{ id: 'm7', name: 'Mike', email: 'mike@flyingfunk.com', phone: '509-555-0006', instrument: 'Trumpet', instruments: 'trumpet', password: defaultPassword, unavailableOnHolidays: false, address: 'Cheney, WA', slug: 'mike' },
+	{ id: 'm8', name: 'Mik', email: 'mik@flyingfunk.com', phone: '208-555-0007', instrument: 'Saxophone', instruments: 'saxophone', password: defaultPassword, unavailableOnHolidays: false, address: 'Post Falls, ID', slug: 'mik' },
+	{ id: 'm9', name: 'Jim', email: 'jim@flyingfunk.com', phone: '509-555-0008', instrument: 'Trombone', instruments: 'trombone', password: defaultPassword, unavailableOnHolidays: false, address: 'Liberty Lake, WA', slug: 'jim' }
 ];
 
 await db.delete(schema.gigVotes);

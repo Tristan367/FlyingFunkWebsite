@@ -1,6 +1,16 @@
 import { db } from './db/index';
 import * as schema from './db/schema';
 import { and, eq, gte } from 'drizzle-orm';
+import { hash, verify } from '@node-rs/argon2';
+
+export async function hashPassword(password: string): Promise<string> {
+	return hash(password);
+}
+
+export async function verifyPassword(member: typeof schema.members.$inferSelect, password: string): Promise<boolean> {
+	if (!member.password) return false;
+	return verify(member.password, password);
+}
 
 export function generateSessionToken(): string {
 	return crypto.randomUUID();

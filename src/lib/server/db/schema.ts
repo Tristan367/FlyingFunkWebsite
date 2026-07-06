@@ -13,6 +13,7 @@ export const members = pgTable('members', {
 	profilePic: text('profile_pic').notNull().default(''),
 	bio: text('bio').notNull().default(''),
 	slug: text('slug').notNull().default(''),
+	password: text('password').notNull().default(''),
 	unavailableOnHolidays: boolean('unavailable_on_holidays')
 		.notNull()
 		.default(false),
