@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { uploadFile } from '$lib/utils/upload';
+
 	let { data, form } = $props();
 	let showUpload = $state(false);
 	let songTitle = $state('');
@@ -7,6 +9,43 @@
 	let editId = $state<string | null>(null);
 	let editTitle = $state('');
 	let editDesc = $state('');
+	let uploading = $state(false);
+	let uploadError = $state('');
+
+	async function handleUpload(e: Event) {
+		e.preventDefault();
+		const formEl = e.target as HTMLFormElement;
+		const fileInput = formEl.querySelector<HTMLInputElement>('input[type="file"]');
+		const file = fileInput?.files?.[0];
+		if (!file) return;
+
+		uploading = true;
+		uploadError = '';
+		const result = await uploadFile(file);
+		if (!result.url) {
+			uploadError = result.error || 'Upload failed';
+			uploading = false;
+			return;
+		}
+
+		const data = new FormData();
+		data.append('title', songTitle);
+		data.append('description', songDesc);
+		data.append('fileUrl', result.url);
+		data.append('filename', file.name);
+
+		const res = await fetch('?/upload', { method: 'POST', body: data });
+		const json = await res.json();
+		if (json.uploadSuccess) {
+			songTitle = '';
+			songDesc = '';
+			fileInput.value = '';
+			showUpload = false;
+		} else {
+			uploadError = json.uploadError || 'Upload failed';
+		}
+		uploading = false;
+	}
 </script>
 
 <h1 class="mb-8 text-3xl font-bold text-amber-400">Songs &amp; Recordings</h1>
@@ -25,7 +64,7 @@
 	<button onclick={() => showUpload = true}
 		class="mb-8 rounded-lg bg-amber-500 px-6 py-3 font-bold text-zinc-900 transition-colors hover:bg-amber-400">Upload Song</button>
 {:else}
-	<form method="POST" action="?/upload" enctype="multipart/form-data" class="mb-8 space-y-4 rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+	<form onsubmit={handleUpload} class="mb-8 space-y-4 rounded-lg border border-zinc-800 bg-zinc-900 p-4">
 		<h2 class="text-sm font-medium text-zinc-400">Upload a Recording</h2>
 		<div>
 			<label for="stitle" class="mb-1 block text-xs text-zinc-400">Title</label>
@@ -42,11 +81,13 @@
 			<input type="file" id="sfile" name="file" accept="audio/*" required
 				class="w-full text-sm text-zinc-400 file:mr-3 file:rounded file:border-0 file:bg-zinc-700 file:px-3 file:py-1 file:text-xs file:text-zinc-200" />
 		</div>
-		{#if form?.uploadError}
-			<p class="text-sm text-red-400">{form.uploadError}</p>
+		{#if uploadError}
+			<p class="text-sm text-red-400">{uploadError}</p>
 		{/if}
 		<div class="flex gap-2">
-			<button type="submit" class="rounded-lg bg-amber-500 px-4 py-2 text-sm font-bold text-zinc-900 hover:bg-amber-400">Upload</button>
+			<button type="submit" disabled={uploading} class="rounded-lg bg-amber-500 px-4 py-2 text-sm font-bold text-zinc-900 hover:bg-amber-400 disabled:opacity-50">
+				{uploading ? 'Uploading...' : 'Upload'}
+			</button>
 			<button type="button" onclick={() => showUpload = false}
 				class="rounded-lg border border-zinc-700 px-4 py-2 text-sm hover:border-zinc-500">Cancel</button>
 		</div>

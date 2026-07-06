@@ -18,13 +18,11 @@
 		const input = event.target as HTMLInputElement;
 		const file = input.files?.[0];
 		if (!file) return;
-		if (file.size > 5 * 1024 * 1024) { alert('Image must be under 5MB'); return; }
+		if (file.size > 10 * 1024 * 1024) { alert('Image must be under 10MB'); return; }
 		uploading = true;
-		const f = new FormData();
-		f.append('file', file);
 		try {
-			const res = await fetch('/api/upload', { method: 'POST', body: f });
-			const result = await res.json();
+			const { uploadFile } = await import('$lib/utils/upload');
+			const result = await uploadFile(file);
 			if (result.url) profilePic = result.url;
 			else alert(result.error || 'Upload failed');
 		} catch { alert('Upload failed'); }

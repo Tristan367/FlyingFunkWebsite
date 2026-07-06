@@ -1,7 +1,6 @@
 import { db } from '$lib/server/db';
 import * as schema from '$lib/server/db/schema';
 import { desc, eq } from 'drizzle-orm';
-import { getStorage } from '$lib/server/adapters';
 
 export async function load({ locals }) {
 	const songs = await db
@@ -28,28 +27,20 @@ export const actions = {
 		const data = await request.formData();
 		const title = data.get('title')?.toString();
 		const description = data.get('description')?.toString() || '';
-		const file = data.get('file') as File | null;
+		const fileUrl = data.get('fileUrl')?.toString();
+		const filename = data.get('filename')?.toString() || '';
 
-		if (!title || !file) return { uploadError: 'Title and file are required.' };
-		if (!file.type.startsWith('audio/')) return { uploadError: 'Please upload an audio file.' };
+		if (!title || !fileUrl) return { uploadError: 'Title and file are required.' };
 
-		try {
-			const storage = getStorage();
-			const { url, filename } = await storage.saveFile(file, locals.user!.id);
+		await db.insert(schema.songs).values({
+			uploaderId: locals.user!.id,
+			title,
+			description,
+			filename,
+			path: fileUrl
+		});
 
-			await db.insert(schema.songs).values({
-				uploaderId: locals.user!.id,
-				title,
-				description,
-				filename,
-				path: url
-			});
-
-			return { uploadSuccess: true };
-		} catch (e) {
-			console.error('[songs/upload] Error:', e);
-			return { uploadError: 'Upload failed. Try again.' };
-		}
+		return { uploadSuccess: true };
 	},
 	delete: async ({ request }) => {
 		const data = await request.formData();
