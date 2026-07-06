@@ -1,3 +1,5 @@
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import * as schema from './schema';
 
@@ -8,28 +10,21 @@ const dbUrl = INJECTED_URL.startsWith('postgresql://')
 	? INJECTED_URL
 	: process.env.DATABASE_URL || '';
 
-if (!dbUrl) {
-	throw new Error('DATABASE_URL not set. Local dev: export DATABASE_URL=postgresql://user:pass@host/db');
+if (!dbUrl && typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
+	// Deliberately empty — defer error to first query at runtime
+	// During SvelteKit build analysis, DATABASE_URL may not be set and we shouldn't throw
 }
 
-const { drizzle: pgDrizzle } = await import('drizzle-orm/postgres-js');
-const postgres = (await import('postgres')).default;
-const client = postgres(dbUrl, { ssl: { rejectUnauthorized: false }, max: 5, connect_timeout: 10 });
-const _db = pgDrizzle(client, { schema });
-patchBuilder(_db);
+const pgClient = dbUrl
+	? postgres(dbUrl, { ssl: { rejectUnauthorized: false }, max: 5, connect_timeout: 10 })
+	: ({}) as ReturnType<typeof postgres>;
 
-/**
- * The app was written against libsql/SQLite, whose query builder exposes
- * synchronous terminal methods `.get()` (first row) and `.all()` (all rows).
- * drizzle-orm's postgres-js builder is a thenable that resolves to an array
- * and has NO `.get()`/`.all()`. To avoid rewriting ~100 call sites, augment
- * the postgres-js query-builder prototype with compatible `.get()`/`.all()`.
- *
- * The builder MUST stay synchronous so chaining works
- * (`db.select().from(x).where(...)`); we only add terminal helpers.
- */
+const _db = dbUrl
+	? drizzle(pgClient, { schema })
+	: ({} as PostgresJsDatabase<typeof schema>);
+
 function patchBuilder(instance: PostgresJsDatabase<typeof schema>) {
-	// Reach the builder prototype chain via a throwaway builder instance.
+	if (!dbUrl) return;
 	const builder: object = instance.select().from(schema.members);
 	let proto = Object.getPrototypeOf(builder);
 	while (proto && proto !== Object.prototype) {
@@ -38,9 +33,7 @@ function patchBuilder(instance: PostgresJsDatabase<typeof schema>) {
 				value: function () {
 					return Promise.resolve(this).then((rows: unknown[]) => rows);
 				},
-				writable: true,
-				configurable: true,
-				enumerable: false
+				writable: true, configurable: true, enumerable: false
 			});
 		}
 		if (!('get' in proto)) {
@@ -48,13 +41,13 @@ function patchBuilder(instance: PostgresJsDatabase<typeof schema>) {
 				value: function () {
 					return Promise.resolve(this).then((rows: unknown[]) => rows[0] ?? null);
 				},
-				writable: true,
-				configurable: true,
-				enumerable: false
+				writable: true, configurable: true, enumerable: false
 			});
 		}
 		proto = Object.getPrototypeOf(proto);
 	}
 }
+
+patchBuilder(_db);
 
 export const db = _db;
