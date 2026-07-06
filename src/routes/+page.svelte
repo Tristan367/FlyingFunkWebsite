@@ -7,13 +7,6 @@
 	let copiedGig = $state<string | null>(null);
 	let scrollY = $state(0);
 	let heroVisible = $state(false);
-	let gigsSection: HTMLElement | null = $state(null);
-	let blogSection: HTMLElement | null = $state(null);
-	let membersSection: HTMLElement | null = $state(null);
-
-	let gigsVisible = $state(false);
-	let blogVisible = $state(false);
-	let membersVisible = $state(false);
 
 	onMount(() => {
 		heroVisible = true;
@@ -23,29 +16,7 @@
 		}
 		window.addEventListener('scroll', onScroll, { passive: true });
 
-		const observer = new IntersectionObserver(
-			(entries) => {
-				for (const e of entries) {
-					if (e.target === gigsSection && e.isIntersecting) {
-						gigsVisible = true;
-					}
-					if (e.target === blogSection && e.isIntersecting) {
-						blogVisible = true;
-					}
-					if (e.target === membersSection && e.isIntersecting) {
-						membersVisible = true;
-					}
-				}
-			},
-			{ threshold: 0.3 }
-		);
-
-		if (gigsSection) observer.observe(gigsSection);
-		if (blogSection) observer.observe(blogSection);
-		if (membersSection) observer.observe(membersSection);
-
 		return () => {
-			observer.disconnect();
 			window.removeEventListener('scroll', onScroll);
 		};
 	});
@@ -63,7 +34,6 @@
 
 <!-- Hero -->
 <section class="relative overflow-hidden {data.config.heroImage ? 'bg-zinc-950' : 'bg-gradient-to-b from-amber-500/10 to-zinc-950'} py-32 sm:py-48">
-	<!-- Animated gradient background -->
 	<div class="absolute inset-0 opacity-20" style="background:linear-gradient(135deg,#f59e0b22 0%,transparent 25%,#f59e0b11 50%,transparent 75%,#f59e0b22 100%);background-size:400% 400%;animation:heroShift 12s ease-in-out infinite"></div>
 	{#if data.config.heroImage}
 		<div class="absolute inset-0 flex items-center justify-center">
@@ -110,11 +80,11 @@
 
 <!-- Upcoming Gigs -->
 {#if data.upcomingGigs.length > 0}
-	<section bind:this={gigsSection} class="mx-auto max-w-4xl px-4 py-16">
+	<section class="mx-auto max-w-4xl px-4 py-16">
 		<h2 class="mb-8 text-center text-3xl font-bold text-amber-400">Upcoming Gigs</h2>
 		<div class="space-y-4">
-			{#each data.upcomingGigs as gig, i}
-				<div class="rounded-lg border border-zinc-800 bg-zinc-900 p-6 transition-all duration-500 {gigsVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'}" style="transition-delay:{i * 0.1}s">
+			{#each data.upcomingGigs as gig}
+				<div class="rounded-lg border border-zinc-800 bg-zinc-900 p-6">
 					<div class="mb-2">
 						<h3 class="text-lg font-bold">{gig.venue}</h3>
 						<p class="text-sm font-bold text-amber-400">
@@ -146,15 +116,14 @@
 {/if}
 
 <!-- The Band -->
-<section bind:this={membersSection} class="mx-auto max-w-6xl px-4 py-16">
+<section class="mx-auto max-w-6xl px-4 py-16">
 	<h2 class="mb-8 text-center text-3xl font-bold text-amber-400">The Band</h2>
 	<div class="mx-auto grid max-w-2xl grid-cols-2 gap-4 sm:grid-cols-4">
-		{#each data.members as member, i}
+		{#each data.members as member}
 			{@const hasProfile = member.slug && member.bio}
 			<a href={hasProfile ? '/' + member.slug : '#'}
 				onclick={hasProfile ? undefined : (e: Event) => e.preventDefault()}
-				class="rounded-lg border border-zinc-800 bg-zinc-900 p-4 text-center transition-all duration-500 {membersVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'} {hasProfile ? 'hover:border-amber-500/50 hover:scale-105 hover:shadow-lg hover:shadow-amber-500/5' : 'cursor-default'}"
-				style="transition-delay:{i * 0.08}s"
+				class="rounded-lg border border-zinc-800 bg-zinc-900 p-4 text-center transition-all duration-200 {hasProfile ? 'hover:border-amber-500/50 hover:scale-105 hover:shadow-lg hover:shadow-amber-500/5' : 'cursor-default'}"
 			>
 				<div class="mx-auto mb-2 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-amber-500/20">
 					{#if member.profilePic}
@@ -172,14 +141,14 @@
 
 <!-- Latest Blog -->
 {#if data.blogPosts.length > 0}
-	<section bind:this={blogSection} class="mx-auto max-w-4xl px-4 py-16">
+	<section class="mx-auto max-w-4xl px-4 py-16">
 		<div class="mb-8">
 			<h2 class="text-3xl font-bold text-amber-400">Latest from the Blog</h2>
 			<a href="/blog" class="mt-2 inline-block text-sm text-amber-400 hover:underline">View all posts &rarr;</a>
 		</div>
 		<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-			{#each data.blogPosts as post, i}
-				<a href="/blog/{post.slug}" class="rounded-lg border border-zinc-800 bg-zinc-900 p-6 transition-all duration-500 {blogVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'} hover:border-amber-500/50 hover:scale-[1.02] hover:shadow-lg hover:shadow-amber-500/5" style="transition-delay:{i * 0.1}s">
+			{#each data.blogPosts as post}
+				<a href="/blog/{post.slug}" class="rounded-lg border border-zinc-800 bg-zinc-900 p-6 transition-all duration-200 hover:border-amber-500/50 hover:scale-[1.02] hover:shadow-lg hover:shadow-amber-500/5">
 					<h3 class="mb-2 font-bold text-amber-400">{post.title}</h3>
 					<p class="text-sm text-zinc-500">
 						by {post.authorName} &middot;
@@ -197,10 +166,5 @@
 		25% { background-position: 100% 0%; }
 		50% { background-position: 100% 100%; }
 		75% { background-position: 0% 100%; }
-	}
-
-	@keyframes fadeIn {
-		from { opacity: 0; transform: translateY(6px); }
-		to { opacity: 1; transform: translateY(0); }
 	}
 </style>
