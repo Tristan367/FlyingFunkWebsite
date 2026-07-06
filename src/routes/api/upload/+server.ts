@@ -29,14 +29,19 @@ export async function POST({ request, cookies }) {
 	}
 
 	const storage = getStorage();
-	const { url, filename } = await storage.saveFile(file, memberId);
+	try {
+		const { url, filename } = await storage.saveFile(file, memberId);
 
-	await db.insert(schema.images).values({
-		filename,
-		path: url,
-		scope,
-		uploaderId: memberId === 'anonymous' ? null : memberId
-	});
+		await db.insert(schema.images).values({
+			filename,
+			path: url,
+			scope,
+			uploaderId: memberId === 'anonymous' ? null : memberId
+		});
 
-	return json({ url, filename });
+		return json({ url, filename });
+	} catch (e) {
+		console.error('[api/upload] Error:', e);
+		return json({ error: 'Upload failed' }, { status: 500 });
+	}
 }

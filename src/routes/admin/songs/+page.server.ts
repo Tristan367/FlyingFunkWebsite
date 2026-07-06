@@ -33,18 +33,23 @@ export const actions = {
 		if (!title || !file) return { uploadError: 'Title and file are required.' };
 		if (!file.type.startsWith('audio/')) return { uploadError: 'Please upload an audio file.' };
 
-		const storage = getStorage();
-		const { url, filename } = await storage.saveFile(file, locals.user!.id);
+		try {
+			const storage = getStorage();
+			const { url, filename } = await storage.saveFile(file, locals.user!.id);
 
-		await db.insert(schema.songs).values({
-			uploaderId: locals.user!.id,
-			title,
-			description,
-			filename,
-			path: url
-		});
+			await db.insert(schema.songs).values({
+				uploaderId: locals.user!.id,
+				title,
+				description,
+				filename,
+				path: url
+			});
 
-		return { uploadSuccess: true };
+			return { uploadSuccess: true };
+		} catch (e) {
+			console.error('[songs/upload] Error:', e);
+			return { uploadError: 'Upload failed. Try again.' };
+		}
 	},
 	delete: async ({ request }) => {
 		const data = await request.formData();
