@@ -57,12 +57,25 @@ export function computeBookableDates(
 	const start = new Date(startDate + 'T00:00:00');
 	const end = new Date(endDate + 'T00:00:00');
 
+	// Filter to members who have set at least one instrument
+	const activeMembers = membersInfo.filter((m) =>
+		m.instruments.length > 0 && m.instruments[0] !== ''
+	);
+
+	// If no members have instruments yet, all dates are bookable
+	if (activeMembers.length === 0) {
+		for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+			bookable.add(d.toISOString().split('T')[0]);
+		}
+		return bookable;
+	}
+
 	for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
 		const dateStr = d.toISOString().split('T')[0];
 		const dayOfWeek = d.getDay();
 
 		const allCovered = required.every((reqInst) => {
-			return membersInfo.some((m) => {
+			return activeMembers.some((m) => {
 				if (!isMemberAvailable(m, dateStr, dayOfWeek)) return false;
 				return m.instruments.some((i) => i.toLowerCase() === reqInst.toLowerCase());
 			});

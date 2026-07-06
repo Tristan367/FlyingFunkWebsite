@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { invalidateAll } from '$app/navigation';
 	import { uploadFile } from '$lib/utils/upload';
 
 	let { data, form } = $props();
@@ -40,6 +41,7 @@
 			songDesc = '';
 			fileInput.value = '';
 			showUpload = false;
+			await invalidateAll();
 		} else {
 			uploadError = 'Upload failed';
 		}
