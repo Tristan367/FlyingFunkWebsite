@@ -29,7 +29,9 @@ export async function uploadFile(
 		});
 
 		if (!uploadRes.ok) {
-			return { url: '', error: 'Upload to S3 failed' };
+			const errText = await uploadRes.text();
+			console.error('S3 upload failed:', uploadRes.status, errText);
+			return { url: '', error: 'Upload to S3 failed: ' + uploadRes.status };
 		}
 
 		return { url: presigned.publicUrl };
