@@ -1,35 +1,38 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
+import postgresFn from 'postgres';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import * as schema from './schema';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 // Production: DATABASE_URL is injected at build time via amplify.yml
-// Local dev:   set DATABASE_URL=postgresql://... in your .env or shell
+// Local dev:   reads DATABASE_URL from .env file or process.env
 const INJECTED_URL = 'REPLACE_WITH_DB_URL';
-const dbUrl = INJECTED_URL.startsWith('postgresql://')
-	? INJECTED_URL
-	: process.env.DATABASE_URL || '';
 
-console.log('[db] INJECTED_URL:', INJECTED_URL.substring(0, 20));
-console.log('[db] process.env.DATABASE_URL:', process.env.DATABASE_URL);
-console.log('[db] resolved dbUrl:', dbUrl.substring(0, 30));
-
-if (!dbUrl && typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
-	// Deliberately empty — defer error to first query at runtime
-	// During SvelteKit build analysis, DATABASE_URL may not be set and we shouldn't throw
+function loadEnv(): string {
+	if (INJECTED_URL.startsWith('postgresql://')) return INJECTED_URL;
+	if (typeof process !== 'undefined' && process.env?.DATABASE_URL) return process.env.DATABASE_URL;
+	try {
+		const envPath = resolve(process.cwd(), '.env');
+		const raw = readFileSync(envPath, 'utf-8');
+		const match = raw.match(/^DATABASE_URL=(.+)$/m);
+		if (match) return match[1].trim();
+	} catch { /* no .env file */ }
+	return '';
 }
 
-const pgClient = dbUrl
-	? postgres(dbUrl, { ssl: { rejectUnauthorized: false }, max: 5, connect_timeout: 10 })
-	: ({}) as ReturnType<typeof postgres>;
+const dbUrl = loadEnv();
 
-const _db = dbUrl
+const pgClient = dbUrl
+	? postgresFn(dbUrl, { ssl: { rejectUnauthorized: false }, max: 5, connect_timeout: 10 })
+	: ({} as ReturnType<typeof postgresFn>);
+
+const _db: PostgresJsDatabase<typeof schema> = dbUrl
 	? drizzle(pgClient, { schema })
 	: ({} as PostgresJsDatabase<typeof schema>);
 
-function patchBuilder(instance: PostgresJsDatabase<typeof schema>) {
-	if (!dbUrl) return;
-	const builder: object = instance.select().from(schema.members);
+if (dbUrl) {
+	const builder: object = _db.select().from(schema.members);
 	let proto = Object.getPrototypeOf(builder);
 	while (proto && proto !== Object.prototype) {
 		if (!('all' in proto)) {
@@ -51,7 +54,5 @@ function patchBuilder(instance: PostgresJsDatabase<typeof schema>) {
 		proto = Object.getPrototypeOf(proto);
 	}
 }
-
-patchBuilder(_db);
 
 export const db = _db;
