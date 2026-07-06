@@ -1,5 +1,6 @@
 <script lang="ts">
 	import RichTextEditor from '$lib/components/RichTextEditor.svelte';
+	import ImageManager from '$lib/components/ImageManager.svelte';
 	import MapPicker from '$lib/components/MapPicker.svelte';
 
 	let { data, form } = $props();
@@ -13,6 +14,7 @@
 	let profilePic = $state(data.member.profilePic);
 	let uploading = $state(false);
 	let addrInput: HTMLInputElement | null = $state(null);
+	let activeImages = $state<Array<{ id: string; filename: string; path: string }>>([]);
 
 	async function uploadProfilePic(event: Event) {
 		const input = event.target as HTMLInputElement;
@@ -106,8 +108,12 @@
 
 	<div>
 		<label class="mb-1 block text-sm text-zinc-400">Bio</label>
-		<RichTextEditor content={bio} onUpdate={(html: string) => bio = html} placeholder="Tell your story..." />
+		<ImageManager scope={'profile-' + data.member.id} onImagesChanged={(imgs) => activeImages = imgs} />
+
+		<div class="mt-4">
+		<RichTextEditor content={bio} onUpdate={(html: string) => bio = html} galleryImages={activeImages} placeholder="Tell your story..." />
 		<input type="hidden" name="bio" value={bio} />
+		</div>
 	</div>
 
 </form>
