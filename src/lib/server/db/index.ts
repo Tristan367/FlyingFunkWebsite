@@ -1,34 +1,22 @@
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import * as schema from './schema';
 
-// In production (Amplify SSR), the DATABASE_URL is injected at build time via sed in amplify.yml.
-// The build step replaces the placeholder below with the actual connection string.
-// For local dev, it falls back to process.env.DATABASE_URL or file:local.db.
+// Production: DATABASE_URL is injected at build time via amplify.yml
+// Local dev:   set DATABASE_URL=postgresql://... in your .env or shell
 const INJECTED_URL = 'REPLACE_WITH_DB_URL';
 const dbUrl = INJECTED_URL.startsWith('postgresql://')
 	? INJECTED_URL
-	: process.env.DATABASE_URL || 'file:local.db';
+	: process.env.DATABASE_URL || '';
 
 if (!dbUrl) {
-	throw new Error('DATABASE_URL not available.');
+	throw new Error('DATABASE_URL not set. Local dev: export DATABASE_URL=postgresql://user:pass@host/db');
 }
-const isPostgres = dbUrl.startsWith('postgresql://') || dbUrl.startsWith('postgres://');
 
-let _db: PostgresJsDatabase<typeof schema>;
-
-if (isPostgres) {
-	const { drizzle: pgDrizzle } = await import('drizzle-orm/postgres-js');
-	const postgres = (await import('postgres')).default;
-	const client = postgres(dbUrl, { ssl: { rejectUnauthorized: false }, max: 5, connect_timeout: 10 });
-	_db = pgDrizzle(client, { schema });
-	patchBuilder(_db);
-} else {
-	const { drizzle: libDrizzle } = await import('drizzle-orm/libsql');
-	const { createClient } = await import('@libsql/client');
-	const client = createClient({ url: dbUrl });
-	// libsql instance is structurally compatible for our usage (schema-typed).
-	_db = libDrizzle(client, { schema }) as unknown as PostgresJsDatabase<typeof schema>;
-}
+const { drizzle: pgDrizzle } = await import('drizzle-orm/postgres-js');
+const postgres = (await import('postgres')).default;
+const client = postgres(dbUrl, { ssl: { rejectUnauthorized: false }, max: 5, connect_timeout: 10 });
+const _db = pgDrizzle(client, { schema });
+patchBuilder(_db);
 
 /**
  * The app was written against libsql/SQLite, whose query builder exposes
