@@ -62,10 +62,14 @@ export function computeBookableDates(
 		m.instruments.length > 0 && m.instruments[0] !== ''
 	);
 
-	// If no members have instruments yet, all dates are bookable
+	// If no members have instruments yet, all dates are bookable (but still respect unavailability)
 	if (activeMembers.length === 0) {
 		for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-			bookable.add(d.toISOString().split('T')[0]);
+			const dateStr = d.toISOString().split('T')[0];
+			const dayOfWeek = d.getDay();
+			// A date is bookable unless ALL members are explicitly unavailable
+			const anyoneAvailable = membersInfo.some((m) => isMemberAvailable(m, dateStr, dayOfWeek));
+			if (anyoneAvailable) bookable.add(dateStr);
 		}
 		return bookable;
 	}
