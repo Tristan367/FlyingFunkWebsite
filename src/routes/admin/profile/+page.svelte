@@ -19,6 +19,43 @@
 
 	let resolvedPreview = $derived(resolveImages(bio, activeImages));
 
+	const PROFILE_TEMPLATE = `<div style="max-width:900px;margin:0 auto;padding:2rem 1.5rem;color:#e0e0e0;font-family:'Segoe UI',sans-serif">
+
+<h1 style="font-size:2.5rem;color:#f7c948;margin:0 0 0.5rem">Hey, I'm {name || 'Your Name'}</h1>
+<p style="font-size:1.1rem;color:#888;margin:0 0 2rem">{instrument || 'Your Instrument'}</p>
+
+<div style="display:flex;flex-wrap:wrap;gap:2rem;margin-bottom:2rem">
+  <div style="flex:1;min-width:250px">
+    <h2 style="color:#63cdda;font-size:1.4rem;margin:0 0 1rem">About Me</h2>
+    <p style="color:#a0a0a0;line-height:1.7;font-size:1.05rem">
+      Write a paragraph or two about yourself — your background, what got you into music, your favorite artists.
+    </p>
+    <p style="color:#a0a0a0;line-height:1.7;font-size:1.05rem">
+      You can add images using <code style="background:#ffffff15;color:#f7c948;padding:0.15em 0.4em;border-radius:3px">./images/filename.jpg</code> — just upload them first with the Images section above.
+    </p>
+  </div>
+  <div style="flex:0 0 200px;text-align:center">
+    <div style="width:180px;height:180px;border-radius:50%;background:linear-gradient(135deg,#ff6b3540,#63cdda40);margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;font-size:4rem">🎸</div>
+    <p style="color:#888;font-size:0.9rem">Replace me with <code style="background:#ffffff15;color:#f7c948;padding:0.15em 0.4em;border-radius:3px">./images/your-photo.jpg</code></p>
+  </div>
+</div>
+
+<h2 style="color:#63cdda;font-size:1.4rem;margin:2rem 0 1rem">Fun Facts</h2>
+<ul style="color:#a0a0a0;line-height:1.8;font-size:1.05rem">
+  <li>I've been playing since I was ___ years old</li>
+  <li>My dream gig would be ___</li>
+  <li>Favorite song to perform: ___</li>
+  <li>When I'm not playing music, I'm ___</li>
+</ul>
+
+<hr style="border:none;border-top:1px solid #ffffff15;margin:2rem 0">
+
+<p style="text-align:center;color:#888;font-style:italic;font-size:0.95rem">
+  This entire profile is raw HTML. Want animations? Games? A custom layout? Just write it in HTML mode.
+</p>
+
+</div>`;
+
 	async function uploadProfilePic(event: Event) {
 		const input = event.target as HTMLInputElement;
 		const file = input.files?.[0];
@@ -110,7 +147,13 @@
 	</div>
 
 	<div>
-		<label class="mb-1 block text-sm text-zinc-400">Bio</label>
+		<div class="mb-1 flex items-center justify-between">
+			<label class="text-sm text-zinc-400">Bio</label>
+			<button type="button" onclick={() => bio = PROFILE_TEMPLATE}
+				class="rounded border border-zinc-700 px-2 py-0.5 text-xs text-zinc-500 hover:border-amber-500 hover:text-amber-400">
+				Load Template
+			</button>
+		</div>
 		<ImageManager scope={'profile-' + data.member.id} onImagesChanged={(imgs) => activeImages = imgs} />
 
 		<div class="mt-4">
