@@ -10,10 +10,10 @@ const members = [
 	{ id: 'm2', name: 'Madi', email: 'mjcmusic87@gmail.com', phone: '509-555-0002', instrument: 'Vocals', instruments: 'vocals', password: defaultPassword, unavailableOnHolidays: false, address: 'Spokane, WA', slug: 'madi' },
 	{ id: 'm3', name: 'Matt', email: 'mattfate@gmail.com', phone: '509-555-0003', instrument: 'Drums', instruments: 'drums', password: defaultPassword, unavailableOnHolidays: false, address: 'Spokane Valley, WA', slug: 'matt' },
 	{ id: 'm4', name: 'Johnny', email: 'typicaljohnnyboy@gmail.com', phone: '509-555-0004', instrument: 'Keys', instruments: 'keys', password: defaultPassword, unavailableOnHolidays: false, address: 'Spokane, WA', slug: 'johnny' },
-	{ id: 'm5', name: 'Stefan', email: 'Msakakeeny@gmail.com', phone: '208-555-0005', instrument: 'Bass', instruments: 'bass, keys', password: defaultPassword, unavailableOnHolidays: false, address: 'Coeur d\'Alene, ID', slug: 'stefan' },
+	{ id: 'm5', name: 'Stefan', email: 'stefan@flyingfunk.com', phone: '208-555-0005', instrument: 'Bass', instruments: 'bass, keys', password: defaultPassword, unavailableOnHolidays: false, address: 'Coeur d\'Alene, ID', slug: 'stefan' },
 	{ id: 'm6', name: 'Robert', email: 'robert@flyingfunk.com', phone: '509-555-0010', instrument: 'Bass', instruments: 'bass', password: defaultPassword, unavailableOnHolidays: false, address: 'Spokane, WA', slug: 'robert' },
 	{ id: 'm7', name: 'Mike', email: 'mike.keepe@gmail.com', phone: '509-555-0006', instrument: 'Trumpet', instruments: 'trumpet', password: defaultPassword, unavailableOnHolidays: false, address: 'Cheney, WA', slug: 'mike' },
-	{ id: 'm8', name: 'Mik', email: 'mik@flyingfunk.com', phone: '208-555-0007', instrument: 'Saxophone', instruments: 'saxophone', password: defaultPassword, unavailableOnHolidays: false, address: 'Post Falls, ID', slug: 'mik' },
+	{ id: 'm8', name: 'Mik', email: 'Msakakeeny@gmail.com', phone: '208-555-0007', instrument: 'Saxophone', instruments: 'saxophone', password: defaultPassword, unavailableOnHolidays: false, address: 'Post Falls, ID', slug: 'mik' },
 	{ id: 'm9', name: 'Jim', email: 'jwp3coug@hotmail.com', phone: '509-555-0008', instrument: 'Trombone', instruments: 'trombone', password: defaultPassword, unavailableOnHolidays: false, address: 'Liberty Lake, WA', slug: 'jim' }
 ];
 
