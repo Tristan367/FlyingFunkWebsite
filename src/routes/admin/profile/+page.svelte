@@ -2,6 +2,7 @@
 	import RichTextEditor from '$lib/components/RichTextEditor.svelte';
 	import ImageManager from '$lib/components/ImageManager.svelte';
 	import MapPicker from '$lib/components/MapPicker.svelte';
+	import { resolveImages } from '$lib/utils/images';
 
 	let { data, form } = $props();
 
@@ -15,6 +16,8 @@
 	let uploading = $state(false);
 	let addrInput: HTMLInputElement | null = $state(null);
 	let activeImages = $state<Array<{ id: string; filename: string; path: string }>>([]);
+
+	let resolvedPreview = $derived(resolveImages(bio, activeImages));
 
 	async function uploadProfilePic(event: Event) {
 		const input = event.target as HTMLInputElement;
@@ -117,3 +120,24 @@
 	</div>
 
 </form>
+
+{#if bio}
+	<div class="mt-8 overflow-hidden border-y border-zinc-700" style="width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw">
+		<div class="border-b border-zinc-800 bg-zinc-950 px-4 py-1.5 text-xs text-zinc-500">
+			<span class="text-amber-400 font-bold">Preview</span>
+			<span class="ml-2">flyingfunk.com/{data.member.slug || 'your-name'}</span>
+		</div>
+		<div class="border-b border-zinc-800 bg-zinc-950/90 px-4 py-4">
+			<div class="mx-auto flex max-w-6xl items-center justify-between">
+				<span class="font-display text-xl tracking-tight text-amber-400">FLYING FUNK</span>
+				<div class="hidden gap-6 text-sm font-semibold text-zinc-400 sm:flex">
+					<span>Home</span><span>Book Us</span><span>Blog</span><span>Music</span><span>Login</span>
+				</div>
+				<span class="text-xl text-zinc-400 sm:hidden">☰</span>
+			</div>
+		</div>
+		<div class="bg-zinc-950 pb-8 pt-4">
+			<div class="prose prose-invert prose-amber max-w-none">{@html resolvedPreview}</div>
+		</div>
+	</div>
+{/if}
