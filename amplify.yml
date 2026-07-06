@@ -7,7 +7,7 @@ frontend:
     build:
       commands:
         - npm run build
-        - cd build/compute/default && npm i --omit=dev && node -e "const f=require('fs');const p='server';const env=process.env;const reps={'REPLACE_WITH_DB_URL':env.DATABASE_URL||'','REPLACE_WITH_SES_USER':env.SES_SMTP_USER||'','REPLACE_WITH_SES_PASS':env.SES_SMTP_PASS||'','REPLACE_WITH_SES_FROM_ADDRESS':env.SES_FROM_ADDRESS||'t_johnson367@outlook.com'};f.readdirSync(p,{recursive:true}).filter(x=>x.endsWith('.js')).forEach(x=>{const fp=p+'/'+x;let c=f.readFileSync(fp,'utf8');let changed=false;for(const[k,v]of Object.entries(reps)){if(c.includes(k)){c=c.replaceAll(k,v);changed=true}}if(changed){f.writeFileSync(fp,c);console.log('Injected into '+x)}})"
+        - cd build/compute/default && npm i --omit=dev && node -e "const f=require('fs');const p='server';const env=process.env;const reps={'REPLACE_WITH_DB_URL':env.DATABASE_URL||'','REPLACE_WITH_SES_USER':env.SES_SMTP_USER||'','REPLACE_WITH_SES_PASS':env.SES_SMTP_PASS||'','REPLACE_WITH_SES_FROM_ADDRESS':env.SES_FROM_ADDRESS||'t_johnson367@outlook.com','REPLACE_WITH_S3_KEY':env.S3_ACCESS_KEY||'','REPLACE_WITH_S3_SECRET':env.S3_SECRET_KEY||''};f.readdirSync(p,{recursive:true}).filter(x=>x.endsWith('.js')).forEach(x=>{const fp=p+'/'+x;let c=f.readFileSync(fp,'utf8');let changed=false;for(const[k,v]of Object.entries(reps)){if(c.includes(k)){c=c.replaceAll(k,v);changed=true}}if(changed){f.writeFileSync(fp,c);console.log('Injected into '+x)}})"
   artifacts:
     baseDirectory: build
     files:
